@@ -1,5 +1,10 @@
 # One-time setup
 
+**Status: done.** Firebase project `dex-job-tracker` is set up (Google sign-in enabled,
+Firestore created, rules published, web app registered, config filled into
+`firebase-config.js`, GitHub Pages domain authorized). Left below for reference / in case you
+ever need to redo it or set up a second environment.
+
 Everything below is a manual, one-time step in the Firebase Console because it needs your
 Google login — I can't do it for you. Takes about 5 minutes, entirely on the free Spark plan
 (no credit card).

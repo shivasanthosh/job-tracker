@@ -3,10 +3,10 @@
 // control lives in firestore.rules (only your Google account can read/write).
 // See SETUP.md at the repo root for how to get these.
 export const firebaseConfig = {
-  apiKey: "REPLACE_ME",
-  authDomain: "REPLACE_ME.firebaseapp.com",
-  projectId: "REPLACE_ME",
-  storageBucket: "REPLACE_ME.appspot.com",
-  messagingSenderId: "REPLACE_ME",
-  appId: "REPLACE_ME",
+  apiKey: "AIzaSyAEqLvHkeQRsMiSTbEyaQhNgAs6CwAhlPY",
+  authDomain: "dex-job-tracker.firebaseapp.com",
+  projectId: "dex-job-tracker",
+  storageBucket: "dex-job-tracker.firebasestorage.app",
+  messagingSenderId: "604595241102",
+  appId: "1:604595241102:web:e8026e640ffc6174c3c9df",
 };
