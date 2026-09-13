@@ -1,0 +1,13 @@
+rules_version = '2';
+
+// Single-user app: only your own Google account can read or write anything.
+// The Firebase web config in wwwroot/js/firebase-config.js is not a secret --
+// this rule is what actually protects the data.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /applications/{applicationId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email == "shivasanthosh531@gmail.com";
+    }
+  }
+}

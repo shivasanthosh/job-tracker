@@ -1,0 +1,38 @@
+name: Compile Tailored Resume
+
+# On-demand compile for a job-specific resume under resume/tailored/<folder>/.
+# The PDF is never published anywhere -- it comes back as a build artifact you
+# download right before sending it. See resume/README.md for the full workflow;
+# the content source of truth is aboutme/resume/CONTEXT.md, in the other repo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      folder:
+        description: "Folder name under resume/tailored/ (e.g. acme-senior-swe)"
+        required: true
+        type: string
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify folder exists
+        run: test -f "resume/tailored/${{ inputs.folder }}/ShivaSanthoshKumar-Resume.tex"
+
+      - name: Compile resume PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ShivaSanthoshKumar-Resume.tex
+          working_directory: resume/tailored/${{ inputs.folder }}
+          compiler: xelatex
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resume-${{ inputs.folder }}
+          path: resume/tailored/${{ inputs.folder }}/ShivaSanthoshKumar-Resume.pdf
+          retention-days: 30

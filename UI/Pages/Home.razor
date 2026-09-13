@@ -1,0 +1,112 @@
+@page "/"
+
+<PageTitle>Job Tracker</PageTitle>
+
+@if (_user is null)
+{
+    <div class="login-screen">
+        <h1><i class="fa-solid fa-briefcase"></i> Job Tracker</h1>
+        <p>Sign in with Google to see and track your applications.</p>
+        <button class="btn-primary" @onclick="SignIn">
+            <i class="fa-brands fa-google"></i> Sign in with Google
+        </button>
+    </div>
+}
+else
+{
+    <div class="topbar">
+        <h1><i class="fa-solid fa-briefcase"></i> Job Tracker</h1>
+        <div class="user-info">
+            @if (!string.IsNullOrWhiteSpace(_user.PhotoUrl))
+            {
+                <img class="avatar" src="@_user.PhotoUrl" alt="" />
+            }
+            <span>@_user.DisplayName</span>
+            <button class="btn-secondary" @onclick="SignOutUser">Sign out</button>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <button class="btn-primary" @onclick="StartAdd"><i class="fa-solid fa-plus"></i> Add Application</button>
+    </div>
+
+    @if (_showForm)
+    {
+        <div class="form-panel">
+            <h3>@(_isEditing ? "Edit Application" : "New Application")</h3>
+            <div class="form-grid">
+                <label>Company
+                    <input @bind="_draft.Company" placeholder="Acme Corp" />
+                </label>
+                <label>Role
+                    <input @bind="_draft.Role" placeholder="Senior Software Engineer" />
+                </label>
+                <label>Job Link
+                    <input @bind="_draft.JobLink" placeholder="https://..." />
+                </label>
+                <label>Status
+                    <select @bind="_draft.Status">
+                        @foreach (var s in ApplicationStatus.All)
+                        {
+                            <option value="@s">@s</option>
+                        }
+                    </select>
+                </label>
+                <label>Date Applied
+                    <input type="date" value="@_draft.DateApplied"
+                           @oninput="e => _draft.DateApplied = e.Value?.ToString() ?? string.Empty" />
+                </label>
+                <label class="notes-label">Notes
+                    <textarea @bind="_draft.Notes" rows="3" placeholder="Referral, recruiter contact, next steps..."></textarea>
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="btn-primary" @onclick="SaveDraft">Save</button>
+                <button class="btn-secondary" @onclick="CancelForm">Cancel</button>
+            </div>
+        </div>
+    }
+
+    @if (_applications.Count == 0)
+    {
+        <p class="empty-state">No applications yet — add your first one above.</p>
+    }
+    else
+    {
+        <table class="applications-table">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Applied</th>
+                    <th>Updated</th>
+                    <th>Link</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var app in _applications)
+                {
+                    <tr>
+                        <td>@app.Company</td>
+                        <td>@app.Role</td>
+                        <td><span class="status status-@app.Status.ToLowerInvariant()">@app.Status</span></td>
+                        <td>@app.DateApplied</td>
+                        <td>@app.LastUpdate</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(app.JobLink))
+                            {
+                                <a href="@app.JobLink" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            }
+                        </td>
+                        <td class="row-actions">
+                            <button class="btn-icon" title="Edit" @onclick="() => StartEdit(app)"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-icon" title="Delete" @onclick="() => DeleteApplication(app.Id!)"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
