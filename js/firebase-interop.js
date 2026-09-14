@@ -39,6 +39,15 @@ function toPlainUser(user) {
   };
 }
 
+// Every Firestore/auth call below returns a plain { ok, code, message } result instead of
+// letting rejections escape -- an uncaught JS promise rejection surfaces to Blazor as an
+// unhandled JSException and trips the generic #blazor-error-ui banner, which is not a
+// helpful way to tell a signed-in-but-unauthorized user (or a flaky network) what happened.
+function errorResult(error) {
+  console.error(error);
+  return { ok: false, code: error?.code ?? "unknown", message: error?.message ?? String(error) };
+}
+
 window.jobTracker = {
   registerAuthCallback(dotNetRef) {
     onAuthStateChanged(auth, (user) => {
@@ -47,7 +56,12 @@ window.jobTracker = {
   },
 
   async signIn() {
-    await signInWithPopup(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+      return { ok: true };
+    } catch (error) {
+      return errorResult(error);
+    }
   },
 
   async signOutUser() {
@@ -67,19 +81,34 @@ window.jobTracker = {
         const apps = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
         dotNetRef.invokeMethodAsync("OnApplicationsChanged", JSON.stringify(apps));
       },
-      (error) => console.error("applications listener error", error)
+      (error) => dotNetRef.invokeMethodAsync("OnApplicationsError", errorResult(error))
     );
   },
 
   async addApplication(data) {
-    await addDoc(collection(db, "applications"), data);
+    try {
+      await addDoc(collection(db, "applications"), data);
+      return { ok: true };
+    } catch (error) {
+      return errorResult(error);
+    }
   },
 
   async updateApplication(id, data) {
-    await updateDoc(doc(db, "applications", id), data);
+    try {
+      await updateDoc(doc(db, "applications", id), data);
+      return { ok: true };
+    } catch (error) {
+      return errorResult(error);
+    }
   },
 
   async deleteApplication(id) {
-    await deleteDoc(doc(db, "applications", id));
+    try {
+      await deleteDoc(doc(db, "applications", id));
+      return { ok: true };
+    } catch (error) {
+      return errorResult(error);
+    }
   },
 };
