@@ -2,14 +2,48 @@
 
 <PageTitle>Job Tracker</PageTitle>
 
+@if (_errorMessage is not null)
+{
+    <div class="error-banner" role="alert">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <span>@_errorMessage</span>
+        <button class="btn-icon" title="Dismiss" @onclick="DismissError">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+}
+
 @if (_user is null)
 {
     <div class="login-screen">
-        <h1><i class="fa-solid fa-briefcase"></i> Job Tracker</h1>
-        <p>Sign in with Google to see and track your applications.</p>
-        <button class="btn-primary" @onclick="SignIn">
-            <i class="fa-brands fa-google"></i> Sign in with Google
-        </button>
+        <div class="login-hero">
+            <div class="login-badge"><i class="fa-solid fa-briefcase"></i></div>
+            <h1>Job Tracker</h1>
+            <p class="login-tagline">One place to track every application, interview, and offer.</p>
+            <button class="btn-primary btn-lg" @onclick="SignIn">
+                <i class="fa-brands fa-google"></i> Sign in with Google
+            </button>
+        </div>
+
+        <div class="login-features">
+            <div class="feature"><i class="fa-solid fa-bolt"></i><span>Realtime sync, everywhere you sign in</span></div>
+            <div class="feature"><i class="fa-solid fa-shield-halved"></i><span>Private — locked to your account</span></div>
+            <div class="feature"><i class="fa-solid fa-table-list"></i><span>Status, dates &amp; notes at a glance</span></div>
+        </div>
+
+        <div class="login-companies">
+            <p>Built for tracking applications to companies like</p>
+            <div class="company-icons">
+                <i class="fa-brands fa-google" title="Google"></i>
+                <i class="fa-brands fa-microsoft" title="Microsoft"></i>
+                <i class="fa-brands fa-amazon" title="Amazon"></i>
+                <i class="fa-brands fa-apple" title="Apple"></i>
+                <i class="fa-brands fa-meta" title="Meta"></i>
+                <i class="fa-brands fa-airbnb" title="Airbnb"></i>
+                <i class="fa-brands fa-slack" title="Slack"></i>
+                <i class="fa-brands fa-spotify" title="Spotify"></i>
+            </div>
+        </div>
     </div>
 }
 else
@@ -61,8 +95,10 @@ else
                 </label>
             </div>
             <div class="form-actions">
-                <button class="btn-primary" @onclick="SaveDraft">Save</button>
-                <button class="btn-secondary" @onclick="CancelForm">Cancel</button>
+                <button class="btn-primary" disabled="@_isSaving" @onclick="SaveDraft">
+                    @(_isSaving ? "Saving..." : "Save")
+                </button>
+                <button class="btn-secondary" disabled="@_isSaving" @onclick="CancelForm">Cancel</button>
             </div>
         </div>
     }
@@ -89,7 +125,11 @@ else
                 @foreach (var app in _applications)
                 {
                     <tr>
-                        <td>@app.Company</td>
+                        <td>
+                            <span class="company-cell">
+                                <i class="@CompanyIconClass(app.Company) company-icon"></i>@app.Company
+                            </span>
+                        </td>
                         <td>@app.Role</td>
                         <td><span class="status status-@app.Status.ToLowerInvariant()">@app.Status</span></td>
                         <td>@app.DateApplied</td>
@@ -101,8 +141,8 @@ else
                             }
                         </td>
                         <td class="row-actions">
-                            <button class="btn-icon" title="Edit" @onclick="() => StartEdit(app)"><i class="fa-solid fa-pen"></i></button>
-                            <button class="btn-icon" title="Delete" @onclick="() => DeleteApplication(app.Id!)"><i class="fa-solid fa-trash"></i></button>
+                            <button class="btn-icon" title="Edit" disabled="@_isDeleting" @onclick="() => StartEdit(app)"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn-icon" title="Delete" disabled="@_isDeleting" @onclick="() => DeleteApplication(app.Id!)"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 }

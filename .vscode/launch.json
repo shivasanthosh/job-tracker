@@ -1,0 +1,22 @@
+{
+    // Requires the "C# Dev Kit" extension (ms-dotnettools.csdevkit), which provides the
+    // Blazor WebAssembly debug adapter. See .vscode/extensions.json.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Job Tracker (Blazor WASM)",
+            "type": "blazorwasm",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/UI",
+            "url": "http://localhost:5263",
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "Attach to running app",
+            "type": "blazorwasm",
+            "request": "attach",
+            "cwd": "${workspaceFolder}/UI",
+            "url": "http://localhost:5263"
+        }
+    ]
+}

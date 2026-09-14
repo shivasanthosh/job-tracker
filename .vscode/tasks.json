@@ -1,0 +1,38 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "${workspaceFolder}/UI/UI.csproj"],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            // Rebuilds and reloads the browser on save -- faster inner loop than
+            // launch.json's plain build+run when you're not attaching the debugger.
+            "label": "watch",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["watch", "run", "--project", "${workspaceFolder}/UI/UI.csproj"],
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(.*)$",
+                    "file": 1,
+                    "location": 1,
+                    "message": 1
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^.*Building\\.\\.\\.",
+                    "endsPattern": "^.*Now listening on:.*"
+                }
+            }
+        }
+    ]
+}

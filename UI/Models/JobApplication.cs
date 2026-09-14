@@ -27,3 +27,16 @@ public static class ApplicationStatus
         "Applied", "OA", "Interviewing", "Offer", "Rejected", "Withdrawn"
     };
 }
+
+/// <summary>
+/// Outcome of a jobTracker.* JS interop call. firebase-interop.js catches every
+/// Firestore/auth rejection and returns one of these instead of letting the promise
+/// reject, so a permission-denied (or offline, or popup-blocked) failure can be shown
+/// as a normal error message instead of tripping Blazor's unhandled-exception UI.
+/// </summary>
+public class JsResult
+{
+    public bool Ok { get; set; }
+    public string? Code { get; set; }
+    public string? Message { get; set; }
+}
